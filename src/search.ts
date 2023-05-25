@@ -1,20 +1,6 @@
 import fs from "fs";
 import { extractTokens } from "./lib/tokens";
-const getArrayIntersection = (arrays: string[][]): string[] => {
-  if (arrays.length === 0) {
-    return [];
-  }
-
-  const [firstArray, ...remainingArrays] = arrays;
-  return firstArray.filter((item) =>
-    remainingArrays.every((array) => array.includes(item))
-  );
-};
-
-const unique = (a: string[]) => Array.from(new Set(a));
-
-const getArrayUnion = (arrays: string[][]): string[] => unique(arrays.flat());
-
+import { getArrayUnion, getArrayIntersection } from "./lib/setops";
 const search = (indexDir: string) => {
   const findAllDerivedTokens = (baseToken: string) => {
     const files = fs.readdirSync(indexDir);
