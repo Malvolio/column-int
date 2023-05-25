@@ -1,15 +1,14 @@
 // preprocess.ts
 import fs from "fs";
 import commandLineArgs from "command-line-args";
-import { extractTokens } from "./lib/tokens";
+import { extractTokensFromFile } from "./lib/tokens";
 
+// This is the equivalent of the shell function of the same name
+// I *think* the full path to the corpus of data is not needed
 const basename = (path: string) => path.replace(/.*\//g, "");
 
-const extractTokensFromFile = (fileName: string) => {
-  const data = fs.readFileSync(fileName, "utf8");
-  return extractTokens(data);
-};
-
+// an index entry is a newline-delimited list of all the files that
+// contain the token.
 const updateIndex = (
   outputDir: string,
   fileName: string,
@@ -20,22 +19,27 @@ const updateIndex = (
   });
 };
 
-const processFile = (outputDir: string) => (fileName: string) => {
+// this function is curried to make looping easier
+const preprocessFile = (outputDir: string) => (fileName: string) => {
+  console.log(`Processing ${fileName}`);
   const tokens = extractTokensFromFile(fileName);
   updateIndex(outputDir, basename(fileName), tokens);
 };
 
-const processAllFiles = (files: string[] | undefined, outputDir: string) => {
-  (files || []).forEach(processFile(outputDir));
+const preprocessAllFiles = (files: string[] | undefined, outputDir: string) => {
+  (files || []).forEach(preprocessFile(outputDir));
 };
 
-const processDirectory = (inputDir: string | undefined, outputDir: string) => {
+const preprocessDirectory = (
+  inputDir: string | undefined,
+  outputDir: string
+) => {
   if (inputDir) {
     const files = fs.readdirSync(inputDir);
     files
       .map((file) => `${inputDir}/${file}`)
       .filter((file) => fs.statSync(file).isFile())
-      .forEach(processFile(outputDir));
+      .forEach(preprocessFile(outputDir));
   }
 };
 
@@ -47,5 +51,5 @@ const optionDefinitions = [
 
 const options = commandLineArgs(optionDefinitions);
 
-processAllFiles(options.src, options.output);
-processDirectory(options.input, options.output);
+preprocessAllFiles(options.src, options.output);
+preprocessDirectory(options.input, options.output);
