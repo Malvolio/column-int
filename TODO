@@ -1,0 +1,9 @@
+I decided to spend more time on improving documentation and readability rather than 
+tinkering with features of dubious utility.  However, there are some improvements that
+could clearly be made:
+
+1. Ranking — as written, the system recognized that a file does or does not contain a given token.  A file is consider a match if and only if it contains every searched-for token at least once.  An obvious improvement would be to simply count the number of occurances of each token and treat files where the token appears more often as better matches.
+2. Error-handling — failures are not handled at all.  I think they would halt processing.
+3. Character sets — right now, it searches for alpha-numerics and nothing else.  Something could be done about punctation, non-Latin characters, and so forth.
+4. Format understanding — nothing about the system recognizes that these are emails, so it would not be possible, for example, search by sender-email specifically. 
+5. Complex directories — the system assumes now that all files in the corpus are in a single directory and only refers to them by their basename.  Referring to them by their full path would be wasteful (and not conducive to the process of transferring the files to mobile), so an idea of “relative path” should be incorporated.
